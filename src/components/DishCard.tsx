@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Star, Clock, ChefHat } from 'lucide-react';
+import { Star, Clock, ChefHat, IndianRupee } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 
@@ -24,6 +24,9 @@ interface DishCardProps {
 }
 
 const DishCard: React.FC<DishCardProps> = ({ dish, onClick }) => {
+  const savings = dish.price - dish.kitPrice;
+  const savingsPercent = Math.round((savings / dish.price) * 100);
+
   return (
     <motion.div
       whileHover={{ y: -8 }}
@@ -43,6 +46,9 @@ const DishCard: React.FC<DishCardProps> = ({ dish, onClick }) => {
         <div className="absolute top-4 right-4 bg-white px-2 py-1 rounded-full flex items-center space-x-1">
           <Star className="h-4 w-4 text-yellow-400 fill-current" />
           <span className="text-sm font-medium">{dish.rating}</span>
+        </div>
+        <div className="absolute bottom-4 right-4 bg-orange-500 text-white px-2 py-1 rounded-full text-xs font-bold">
+          Save {savingsPercent}%
         </div>
       </div>
       
@@ -70,8 +76,14 @@ const DishCard: React.FC<DishCardProps> = ({ dish, onClick }) => {
         
         <div className="flex items-center justify-between">
           <div className="space-y-1">
-            <div className="text-lg font-bold text-green-600">${dish.price}</div>
-            <div className="text-sm text-gray-500">Kit: ${dish.kitPrice}</div>
+            <div className="flex items-center text-lg font-bold text-gray-800">
+              <IndianRupee className="h-5 w-5" />
+              <span>{dish.price}</span>
+            </div>
+            <div className="flex items-center text-sm text-green-600 font-semibold">
+              <IndianRupee className="h-4 w-4" />
+              <span>{dish.kitPrice} Kit</span>
+            </div>
           </div>
           <Button 
             className="bg-green-600 hover:bg-green-700 text-white"

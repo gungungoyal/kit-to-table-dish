@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Search, Star, Clock, ChefHat, Leaf, Pizza, Coffee, Heart } from 'lucide-react';
+import { Search, Star, Clock, ChefHat, Leaf, Pizza, Coffee, Heart, IndianRupee } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -9,10 +9,10 @@ import DishCard from '@/components/DishCard';
 import Cart from '@/components/Cart';
 
 const categories = [
-  { name: 'Indian', icon: ChefHat, color: 'bg-orange-500' },
-  { name: 'Pizza', icon: Pizza, color: 'bg-red-500' },
-  { name: 'Healthy', icon: Heart, color: 'bg-green-500' },
-  { name: 'Vegan', icon: Leaf, color: 'bg-emerald-500' },
+  { name: 'South Indian', icon: ChefHat, color: 'bg-orange-500' },
+  { name: 'Pasta', icon: Pizza, color: 'bg-red-500' },
+  { name: 'North Indian', icon: Heart, color: 'bg-green-500' },
+  { name: 'Chinese', icon: Coffee, color: 'bg-yellow-500' },
 ];
 
 const featuredDishes = [
@@ -20,9 +20,9 @@ const featuredDishes = [
     id: 1,
     name: 'Paneer Butter Masala',
     restaurant: 'Spice Garden',
-    image: 'https://images.unsplash.com/photo-1618160702438-9b02ab6515c9?w=400',
-    price: 16.99,
-    kitPrice: 21.99,
+    image: 'https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=400',
+    price: 179,
+    kitPrice: 89,
     rating: 4.8,
     cookTime: 35,
     description: 'Rich and creamy paneer curry with aromatic spices and fresh herbs',
@@ -31,27 +31,27 @@ const featuredDishes = [
   },
   {
     id: 2,
-    name: 'Margherita Pizza',
-    restaurant: 'Green Slice',
-    image: 'https://images.unsplash.com/photo-1582562124811-c09040d0a901?w=400',
-    price: 14.99,
-    kitPrice: 17.99,
+    name: 'Veg Biryani',
+    restaurant: 'Biryani House',
+    image: 'https://images.unsplash.com/photo-1563379091339-03246963d4d6?w=400',
+    price: 199,
+    kitPrice: 99,
     rating: 4.7,
-    cookTime: 25,
-    description: 'Fresh mozzarella, basil, and tomato sauce on hand-tossed dough',
-    calories: 320,
+    cookTime: 45,
+    description: 'Fragrant basmati rice layered with mixed vegetables and aromatic spices',
+    calories: 480,
     isVeg: true
   },
   {
     id: 3,
-    name: 'Quinoa Buddha Bowl',
-    restaurant: 'Pure Greens',
-    image: 'https://images.unsplash.com/photo-1535268647677-300dbf3d78d1?w=400',
-    price: 12.99,
-    kitPrice: 16.99,
+    name: 'Red Sauce Pasta',
+    restaurant: 'Italian Corner',
+    image: 'https://images.unsplash.com/photo-1621996346565-e3dbc353d2e5?w=400',
+    price: 149,
+    kitPrice: 79,
     rating: 4.6,
-    cookTime: 20,
-    description: 'Nutritious quinoa with roasted vegetables, avocado, and tahini dressing',
+    cookTime: 25,
+    description: 'Classic penne pasta in rich tomato basil sauce with fresh herbs',
     calories: 380,
     isVeg: true
   }
@@ -145,9 +145,12 @@ const Index = () => {
             Restaurant Flavors. Home-Cooked.
             <span className="text-green-600 block">Pure Veg Always.</span>
           </h2>
-          <p className="text-xl text-gray-600 mb-8">
+          <p className="text-xl text-gray-600 mb-4">
             Order delicious vegetarian dishes or cook them yourself with our premium ingredient kits
           </p>
+          <div className="bg-orange-100 text-orange-800 px-6 py-3 rounded-lg mb-8 inline-block">
+            <span className="font-semibold">Cook at Home, Save More – Ingredient Kits Available</span>
+          </div>
           
           {/* Search Bar */}
           <motion.div 
@@ -247,10 +250,10 @@ const Index = () => {
             </div>
             <div className="text-center">
               <div className="bg-green-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Heart className="h-8 w-8" />
+                <IndianRupee className="h-8 w-8" />
               </div>
-              <h4 className="font-semibold mb-2">Made with Love</h4>
-              <p className="text-green-100">Passionate about great vegetarian food</p>
+              <h4 className="font-semibold mb-2">Save Money</h4>
+              <p className="text-green-100">Cook at home and save up to 50% on your food</p>
             </div>
           </div>
         </div>
