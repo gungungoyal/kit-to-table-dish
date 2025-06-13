@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Search, Star, Clock, ChefHat, Leaf, Pizza, Coffee, Heart, IndianRupee } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -53,6 +52,71 @@ const featuredDishes = [
     cookTime: 25,
     description: 'Classic penne pasta in rich tomato basil sauce with fresh herbs',
     calories: 380,
+    isVeg: true
+  },
+  {
+    id: 4,
+    name: 'White Sauce Pasta',
+    restaurant: 'Italian Corner',
+    image: 'https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=400',
+    price: 159,
+    kitPrice: 85,
+    rating: 4.5,
+    cookTime: 30,
+    description: 'Creamy alfredo pasta with herbs and parmesan cheese',
+    calories: 450,
+    isVeg: true
+  },
+  {
+    id: 5,
+    name: 'Dosa with Sambar',
+    restaurant: 'South Spice',
+    image: 'https://images.unsplash.com/photo-1630383249896-424e482df921?w=400',
+    price: 89,
+    kitPrice: 49,
+    rating: 4.7,
+    cookTime: 20,
+    description: 'Crispy fermented crepe served with spicy lentil curry and chutneys',
+    calories: 280,
+    isVeg: true
+  },
+  {
+    id: 6,
+    name: 'Chole Bhature',
+    restaurant: 'Punjab Dhaba',
+    image: 'https://images.unsplash.com/photo-1606491956391-491155b27cd8?w=400',
+    price: 129,
+    kitPrice: 69,
+    rating: 4.6,
+    cookTime: 40,
+    description: 'Spicy chickpea curry served with fluffy deep-fried bread',
+    calories: 520,
+    isVeg: true
+  },
+  {
+    id: 7,
+    name: 'Hakka Noodles',
+    restaurant: 'Dragon Bowl',
+    image: 'https://images.unsplash.com/photo-1612929633738-8fe44f7ec841?w=400',
+    price: 139,
+    kitPrice: 75,
+    rating: 4.4,
+    cookTime: 15,
+    description: 'Stir-fried noodles with colorful vegetables and Indo-Chinese spices',
+    calories: 350,
+    isVeg: true
+  },
+  {
+    id: 8,
+    name: 'Rajma Chawal',
+    restaurant: 'Home Kitchen',
+    image: 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=400',
+    price: 119,
+    kitPrice: 65,
+    rating: 4.5,
+    cookTime: 50,
+    description: 'Kidney bean curry served with steamed basmati rice',
+    calories: 400,
     isVeg: true
   }
 ];
@@ -204,9 +268,9 @@ const Index = () => {
         animate="visible"
         className="py-16 px-4"
       >
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-7xl mx-auto">
           <h3 className="text-3xl font-bold text-gray-900 mb-8 text-center">Featured Dishes</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {featuredDishes.map((dish) => (
               <motion.div key={dish.id} variants={itemVariants}>
                 <DishCard 
