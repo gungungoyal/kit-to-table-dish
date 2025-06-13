@@ -14,6 +14,8 @@ interface Dish {
   rating: number;
   cookTime: number;
   description: string;
+  calories?: number;
+  isVeg?: boolean;
 }
 
 interface DishCardProps {
@@ -24,7 +26,7 @@ interface DishCardProps {
 const DishCard: React.FC<DishCardProps> = ({ dish, onClick }) => {
   return (
     <motion.div
-      whileHover={{ y: -8, shadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)" }}
+      whileHover={{ y: -8 }}
       transition={{ duration: 0.3 }}
       className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer"
       onClick={onClick}
@@ -35,6 +37,9 @@ const DishCard: React.FC<DishCardProps> = ({ dish, onClick }) => {
           alt={dish.name}
           className="w-full h-48 object-cover"
         />
+        <div className="absolute top-4 left-4 bg-green-600 text-white px-3 py-1 rounded-full text-xs font-bold flex items-center">
+          🌱 100% VEG
+        </div>
         <div className="absolute top-4 right-4 bg-white px-2 py-1 rounded-full flex items-center space-x-1">
           <Star className="h-4 w-4 text-yellow-400 fill-current" />
           <span className="text-sm font-medium">{dish.rating}</span>
@@ -51,19 +56,25 @@ const DishCard: React.FC<DishCardProps> = ({ dish, onClick }) => {
         </div>
         
         <div className="flex items-center mb-3">
-          <ChefHat className="h-4 w-4 text-orange-500 mr-2" />
+          <ChefHat className="h-4 w-4 text-green-600 mr-2" />
           <span className="text-gray-600">{dish.restaurant}</span>
         </div>
         
         <p className="text-gray-600 mb-4 text-sm line-clamp-2">{dish.description}</p>
         
+        {dish.calories && (
+          <div className="text-sm text-gray-500 mb-3">
+            {dish.calories} calories per serving
+          </div>
+        )}
+        
         <div className="flex items-center justify-between">
           <div className="space-y-1">
-            <div className="text-lg font-bold text-orange-600">${dish.price}</div>
+            <div className="text-lg font-bold text-green-600">${dish.price}</div>
             <div className="text-sm text-gray-500">Kit: ${dish.kitPrice}</div>
           </div>
           <Button 
-            className="bg-orange-500 hover:bg-orange-600 text-white"
+            className="bg-green-600 hover:bg-green-700 text-white"
             onClick={(e) => {
               e.stopPropagation();
               onClick();
