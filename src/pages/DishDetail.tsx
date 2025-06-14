@@ -11,6 +11,38 @@ import { Badge } from '@/components/ui/badge';
 const dishData = {
   1: {
     id: 1,
+    name: 'Masala Dosa',
+    restaurant: 'South Spice',
+    image: 'https://images.unsplash.com/photo-1630383249896-424e482df921?w=800',
+    price: 89,
+    kitPrice: 49,
+    rating: 4.7,
+    cookTime: 20,
+    description: 'Crispy fermented crepe with spiced potato filling and chutneys',
+    ingredients: [
+      'Dosa batter (200ml)',
+      'Potatoes (3 medium)',
+      'Onions (2 medium)',
+      'Green chilies (4)',
+      'Mustard seeds (1 tsp)',
+      'Curry leaves (10)',
+      'Turmeric (1/2 tsp)',
+      'Ginger paste (1 tsp)',
+      'Coconut chutney mix',
+      'Sambar powder (2 tbsp)',
+      'Oil for cooking'
+    ],
+    recipe: [
+      'Heat oil and add mustard seeds, curry leaves',
+      'Add onions and green chilies, sauté until golden',
+      'Add boiled potatoes and turmeric, mash lightly',
+      'Heat dosa pan and spread batter thin',
+      'Add potato filling and fold the dosa',
+      'Serve hot with coconut chutney and sambar'
+    ]
+  },
+  5: {
+    id: 5,
     name: 'Paneer Butter Masala',
     restaurant: 'Spice Garden',
     image: 'https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=800',
@@ -18,7 +50,7 @@ const dishData = {
     kitPrice: 89,
     rating: 4.8,
     cookTime: 35,
-    description: 'Rich and creamy paneer curry with aromatic spices and fresh herbs, served with basmati rice',
+    description: 'Rich and creamy paneer curry with aromatic spices and fresh herbs',
     ingredients: [
       'Paneer cubes (200g)',
       'Basmati rice (150g)',
@@ -43,8 +75,72 @@ const dishData = {
       'Garnish with fresh cilantro and serve hot with rice'
     ]
   },
-  2: {
-    id: 2,
+  10: {
+    id: 10,
+    name: 'Hakka Noodles',
+    restaurant: 'Dragon Bowl',
+    image: 'https://images.unsplash.com/photo-1612929633738-8fe44f7ec841?w=800',
+    price: 139,
+    kitPrice: 75,
+    rating: 4.4,
+    cookTime: 15,
+    description: 'Stir-fried noodles with colorful vegetables and Indo-Chinese spices',
+    ingredients: [
+      'Hakka noodles (200g)',
+      'Mixed vegetables (150g)',
+      'Bell peppers (2)',
+      'Cabbage (100g)',
+      'Carrots (2)',
+      'Soy sauce (3 tbsp)',
+      'Vinegar (1 tbsp)',
+      'Chili sauce (2 tbsp)',
+      'Garlic (4 cloves)',
+      'Spring onions (4)',
+      'Oil for cooking'
+    ],
+    recipe: [
+      'Boil noodles according to package instructions',
+      'Heat oil in wok, add garlic and stir',
+      'Add all vegetables and stir-fry for 3 minutes',
+      'Add sauces and mix well',
+      'Toss in cooked noodles and mix',
+      'Garnish with spring onions and serve hot'
+    ]
+  },
+  13: {
+    id: 13,
+    name: 'Red Sauce Pasta',
+    restaurant: 'Italian Corner',
+    image: 'https://images.unsplash.com/photo-1621996346565-e3dbc353d2e5?w=800',
+    price: 149,
+    kitPrice: 79,
+    rating: 4.6,
+    cookTime: 25,
+    description: 'Classic penne pasta in rich tomato basil sauce with fresh herbs',
+    ingredients: [
+      'Penne pasta (200g)',
+      'Tomatoes (4 large)',
+      'Fresh basil (1 bunch)',
+      'Garlic (4 cloves)',
+      'Onions (1 medium)',
+      'Olive oil (50ml)',
+      'Parmesan cheese (50g)',
+      'Italian herbs (1 tsp)',
+      'Red chili flakes (1/2 tsp)',
+      'Salt and pepper to taste'
+    ],
+    recipe: [
+      'Boil pasta according to package instructions',
+      'Heat olive oil and sauté garlic and onions',
+      'Add chopped tomatoes and cook until soft',
+      'Add herbs and seasonings',
+      'Toss cooked pasta with sauce',
+      'Garnish with fresh basil and parmesan',
+      'Serve hot with garlic bread'
+    ]
+  },
+  21: {
+    id: 21,
     name: 'Veg Biryani',
     restaurant: 'Biryani House',
     image: 'https://images.unsplash.com/photo-1563379091339-03246963d4d6?w=800',
@@ -75,38 +171,6 @@ const dishData = {
       'Add saffron milk and fried onions on top',
       'Cook on high heat for 3 minutes, then dum for 45 minutes',
       'Garnish with mint and serve with raita'
-    ]
-  },
-  3: {
-    id: 3,
-    name: 'Red Sauce Pasta',
-    restaurant: 'Italian Corner',
-    image: 'https://images.unsplash.com/photo-1621996346565-e3dbc353d2e5?w=800',
-    price: 149,
-    kitPrice: 79,
-    rating: 4.6,
-    cookTime: 25,
-    description: 'Classic penne pasta in rich tomato basil sauce with fresh herbs',
-    ingredients: [
-      'Penne pasta (200g)',
-      'Tomatoes (4 large)',
-      'Fresh basil (1 bunch)',
-      'Garlic (4 cloves)',
-      'Onions (1 medium)',
-      'Olive oil (50ml)',
-      'Parmesan cheese (50g)',
-      'Italian herbs (1 tsp)',
-      'Red chili flakes (1/2 tsp)',
-      'Salt and pepper to taste'
-    ],
-    recipe: [
-      'Boil pasta according to package instructions',
-      'Heat olive oil and sauté garlic and onions',
-      'Add chopped tomatoes and cook until soft',
-      'Add herbs and seasonings',
-      'Toss cooked pasta with sauce',
-      'Garnish with fresh basil and parmesan',
-      'Serve hot with garlic bread'
     ]
   }
 };
@@ -408,7 +472,7 @@ const DishDetail = () => {
                 className="w-full bg-green-500 hover:bg-green-600 text-white text-lg py-6"
               >
                 <IndianRupee className="h-5 w-5 mr-2" />
-                Add to Cart - {orderType === 'restaurant' ? dish.price : calculateKitPrice()}
+                Add to Cart - ₹{orderType === 'restaurant' ? dish.price : calculateKitPrice()}
               </Button>
             </motion.div>
           )}
