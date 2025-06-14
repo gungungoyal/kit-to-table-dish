@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Search, Leaf, ShoppingCart } from 'lucide-react';
+import { Search, Leaf, ShoppingCart, ChefHat, Heart, Coffee, Pizza, Star, Clock, IndianRupee } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -20,6 +20,11 @@ const categories = [
   { name: 'Street Food', icon: ChefHat, color: 'bg-amber-500' },
   { name: 'Desserts', icon: Heart, color: 'bg-rose-500' },
 ];
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0 }
+};
 
 const featuredDishes = [
   // South Indian
@@ -513,8 +518,8 @@ const Index = () => {
                 variants={itemVariants}
                 whileHover={{ scale: 1.05, y: -5 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={() => setSelectedCuisine('')}
-                className={`bg-gray-600 rounded-2xl p-4 text-white cursor-pointer shadow-lg hover:shadow-xl transition-all duration-300 ${selectedCuisine === '' ? 'ring-2 ring-green-500' : ''}`}
+                onClick={() => setSelectedCuisine('All')}
+                className={`bg-gray-600 rounded-2xl p-4 text-white cursor-pointer shadow-lg hover:shadow-xl transition-all duration-300 ${selectedCuisine === 'All' ? 'ring-2 ring-green-500' : ''}`}
               >
                 <div className="h-8 w-8 mb-2 mx-auto flex items-center justify-center">🍽️</div>
                 <p className="text-center font-semibold text-sm">All Dishes</p>
@@ -533,7 +538,7 @@ const Index = () => {
                 </motion.div>
               ))}
             </div>
-            {selectedCuisine && (
+            {selectedCuisine && selectedCuisine !== 'All' && (
               <div className="text-center mt-4">
                 <span className="bg-green-100 text-green-800 px-4 py-2 rounded-full text-sm font-medium">
                   Showing {filteredDishes.length} {selectedCuisine} dishes
@@ -546,7 +551,7 @@ const Index = () => {
         {/* Featured Dishes */}
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <h3 className="text-3xl font-bold text-gray-900 mb-8 text-center">
-            {selectedCuisine ? `${selectedCuisine} Dishes` : 'Featured Dishes'}
+            {selectedCuisine && selectedCuisine !== 'All' ? `${selectedCuisine} Dishes` : 'Featured Dishes'}
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filteredDishes.slice(0, 12).map((dish) => (
