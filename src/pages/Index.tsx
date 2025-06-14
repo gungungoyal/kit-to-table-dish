@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Search, Star, Clock, ChefHat, Leaf, Pizza, Coffee, Heart, IndianRupee } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -9,9 +10,12 @@ import Cart from '@/components/Cart';
 
 const categories = [
   { name: 'South Indian', icon: ChefHat, color: 'bg-orange-500' },
-  { name: 'Pasta', icon: Pizza, color: 'bg-red-500' },
   { name: 'North Indian', icon: Heart, color: 'bg-green-500' },
   { name: 'Chinese', icon: Coffee, color: 'bg-yellow-500' },
+  { name: 'Italian', icon: Pizza, color: 'bg-red-500' },
+  { name: 'Gujarati', icon: Leaf, color: 'bg-blue-500' },
+  { name: 'Rajasthani', icon: Star, color: 'bg-purple-500' },
+  { name: 'Continental', icon: Clock, color: 'bg-pink-500' },
 ];
 
 const featuredDishes = [
@@ -26,7 +30,8 @@ const featuredDishes = [
     cookTime: 35,
     description: 'Rich and creamy paneer curry with aromatic spices and fresh herbs',
     calories: 420,
-    isVeg: true
+    isVeg: true,
+    cuisine: 'North Indian'
   },
   {
     id: 2,
@@ -39,7 +44,8 @@ const featuredDishes = [
     cookTime: 45,
     description: 'Fragrant basmati rice layered with mixed vegetables and aromatic spices',
     calories: 480,
-    isVeg: true
+    isVeg: true,
+    cuisine: 'North Indian'
   },
   {
     id: 3,
@@ -52,7 +58,8 @@ const featuredDishes = [
     cookTime: 25,
     description: 'Classic penne pasta in rich tomato basil sauce with fresh herbs',
     calories: 380,
-    isVeg: true
+    isVeg: true,
+    cuisine: 'Italian'
   },
   {
     id: 4,
@@ -65,7 +72,8 @@ const featuredDishes = [
     cookTime: 30,
     description: 'Creamy alfredo pasta with herbs and parmesan cheese',
     calories: 450,
-    isVeg: true
+    isVeg: true,
+    cuisine: 'Italian'
   },
   {
     id: 5,
@@ -78,7 +86,8 @@ const featuredDishes = [
     cookTime: 20,
     description: 'Crispy fermented crepe served with spicy lentil curry and chutneys',
     calories: 280,
-    isVeg: true
+    isVeg: true,
+    cuisine: 'South Indian'
   },
   {
     id: 6,
@@ -91,7 +100,8 @@ const featuredDishes = [
     cookTime: 40,
     description: 'Spicy chickpea curry served with fluffy deep-fried bread',
     calories: 520,
-    isVeg: true
+    isVeg: true,
+    cuisine: 'North Indian'
   },
   {
     id: 7,
@@ -104,7 +114,8 @@ const featuredDishes = [
     cookTime: 15,
     description: 'Stir-fried noodles with colorful vegetables and Indo-Chinese spices',
     calories: 350,
-    isVeg: true
+    isVeg: true,
+    cuisine: 'Chinese'
   },
   {
     id: 8,
@@ -117,7 +128,64 @@ const featuredDishes = [
     cookTime: 50,
     description: 'Kidney bean curry served with steamed basmati rice',
     calories: 400,
-    isVeg: true
+    isVeg: true,
+    cuisine: 'North Indian'
+  },
+  {
+    id: 9,
+    name: 'Dhokla',
+    restaurant: 'Gujarati Kitchen',
+    image: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400',
+    price: 79,
+    kitPrice: 39,
+    rating: 4.6,
+    cookTime: 30,
+    description: 'Steamed and spiced gram flour cake with tangy tempering',
+    calories: 220,
+    isVeg: true,
+    cuisine: 'Gujarati'
+  },
+  {
+    id: 10,
+    name: 'Dal Baati Churma',
+    restaurant: 'Rajasthani Rasoi',
+    image: 'https://images.unsplash.com/photo-1596797038530-2c107229654b?w=400',
+    price: 189,
+    kitPrice: 95,
+    rating: 4.7,
+    cookTime: 60,
+    description: 'Traditional Rajasthani wheat balls with lentil curry and sweet churma',
+    calories: 580,
+    isVeg: true,
+    cuisine: 'Rajasthani'
+  },
+  {
+    id: 11,
+    name: 'Veg Manchurian',
+    restaurant: 'Dragon Bowl',
+    image: 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=400',
+    price: 159,
+    kitPrice: 85,
+    rating: 4.3,
+    cookTime: 25,
+    description: 'Deep-fried vegetable balls in tangy Indo-Chinese sauce',
+    calories: 380,
+    isVeg: true,
+    cuisine: 'Chinese'
+  },
+  {
+    id: 12,
+    name: 'Continental Salad',
+    restaurant: 'Fresh Greens',
+    image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400',
+    price: 99,
+    kitPrice: 55,
+    rating: 4.4,
+    cookTime: 10,
+    description: 'Fresh mixed greens with cherry tomatoes, cucumber and herbs',
+    calories: 150,
+    isVeg: true,
+    cuisine: 'Continental'
   }
 ];
 
@@ -125,7 +193,23 @@ const Index = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [addedToCart, setAddedToCart] = useState<number[]>([]);
   const navigate = useNavigate();
+
+  const filteredDishes = featuredDishes.filter(dish => {
+    const matchesSearch = dish.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         dish.restaurant.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         dish.cuisine.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = selectedCategory === '' || dish.cuisine === selectedCategory;
+    return matchesSearch && matchesCategory;
+  });
+
+  const handleAddToCart = (dishId: number) => {
+    setAddedToCart(prev => [...prev, dishId]);
+    setTimeout(() => {
+      setAddedToCart(prev => prev.filter(id => id !== dishId));
+    }, 2000);
+  };
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -242,8 +326,18 @@ const Index = () => {
         className="py-8 px-4"
       >
         <div className="max-w-6xl mx-auto">
-          <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center">Browse Categories</h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center">Browse Cuisines</h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
+            <motion.div
+              variants={itemVariants}
+              whileHover={{ scale: 1.05, y: -5 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setSelectedCategory('')}
+              className={`bg-gray-600 rounded-2xl p-4 text-white cursor-pointer shadow-lg hover:shadow-xl transition-all duration-300 ${selectedCategory === '' ? 'ring-2 ring-green-500' : ''}`}
+            >
+              <div className="h-8 w-8 mb-2 mx-auto flex items-center justify-center">🍽️</div>
+              <p className="text-center font-semibold text-sm">All Dishes</p>
+            </motion.div>
             {categories.map((category) => (
               <motion.div
                 key={category.name}
@@ -251,13 +345,20 @@ const Index = () => {
                 whileHover={{ scale: 1.05, y: -5 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setSelectedCategory(category.name)}
-                className={`${category.color} rounded-2xl p-6 text-white cursor-pointer shadow-lg hover:shadow-xl transition-all duration-300`}
+                className={`${category.color} rounded-2xl p-4 text-white cursor-pointer shadow-lg hover:shadow-xl transition-all duration-300 ${selectedCategory === category.name ? 'ring-2 ring-green-500' : ''}`}
               >
-                <category.icon className="h-8 w-8 mb-3 mx-auto" />
-                <p className="text-center font-semibold">{category.name}</p>
+                <category.icon className="h-6 w-6 mb-2 mx-auto" />
+                <p className="text-center font-semibold text-sm">{category.name}</p>
               </motion.div>
             ))}
           </div>
+          {selectedCategory && (
+            <div className="text-center mt-4">
+              <span className="bg-green-100 text-green-800 px-4 py-2 rounded-full text-sm font-medium">
+                Showing {filteredDishes.length} {selectedCategory} dishes
+              </span>
+            </div>
+          )}
         </div>
       </motion.section>
 
@@ -269,17 +370,26 @@ const Index = () => {
         className="py-16 px-4"
       >
         <div className="max-w-7xl mx-auto">
-          <h3 className="text-3xl font-bold text-gray-900 mb-8 text-center">Featured Dishes</h3>
+          <h3 className="text-3xl font-bold text-gray-900 mb-8 text-center">
+            {selectedCategory ? `${selectedCategory} Dishes` : 'Featured Dishes'}
+          </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {featuredDishes.map((dish) => (
+            {filteredDishes.map((dish) => (
               <motion.div key={dish.id} variants={itemVariants}>
                 <DishCard 
                   dish={dish} 
                   onClick={() => navigate(`/dish/${dish.id}`)}
+                  onAddToCart={() => handleAddToCart(dish.id)}
+                  isAdded={addedToCart.includes(dish.id)}
                 />
               </motion.div>
             ))}
           </div>
+          {filteredDishes.length === 0 && (
+            <div className="text-center py-12">
+              <p className="text-gray-500 text-lg">No dishes found. Try searching for something else!</p>
+            </div>
+          )}
         </div>
       </motion.section>
 

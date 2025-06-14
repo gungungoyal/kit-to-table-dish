@@ -16,14 +16,17 @@ interface Dish {
   description: string;
   calories?: number;
   isVeg?: boolean;
+  cuisine?: string;
 }
 
 interface DishCardProps {
   dish: Dish;
   onClick: () => void;
+  onAddToCart?: () => void;
+  isAdded?: boolean;
 }
 
-const DishCard: React.FC<DishCardProps> = ({ dish, onClick }) => {
+const DishCard: React.FC<DishCardProps> = ({ dish, onClick, onAddToCart, isAdded = false }) => {
   const savings = dish.price - dish.kitPrice;
   const savingsPercent = Math.round((savings / dish.price) * 100);
 
@@ -50,6 +53,11 @@ const DishCard: React.FC<DishCardProps> = ({ dish, onClick }) => {
         <div className="absolute bottom-4 right-4 bg-orange-500 text-white px-2 py-1 rounded-full text-xs font-bold">
           Save {savingsPercent}%
         </div>
+        {dish.cuisine && (
+          <div className="absolute bottom-4 left-4 bg-blue-600 text-white px-2 py-1 rounded-full text-xs font-bold">
+            {dish.cuisine}
+          </div>
+        )}
       </div>
       
       <div className="p-6">
@@ -74,26 +82,51 @@ const DishCard: React.FC<DishCardProps> = ({ dish, onClick }) => {
           </div>
         )}
         
-        <div className="flex items-center justify-between">
-          <div className="space-y-1">
-            <div className="flex items-center text-lg font-bold text-gray-800">
-              <IndianRupee className="h-5 w-5" />
-              <span>{dish.price}</span>
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="text-sm text-gray-500">Ready-Made</div>
+              <div className="flex items-center text-lg font-bold text-gray-800">
+                <IndianRupee className="h-5 w-5" />
+                <span>{dish.price}</span>
+              </div>
             </div>
-            <div className="flex items-center text-sm text-green-600 font-semibold">
-              <IndianRupee className="h-4 w-4" />
-              <span>{dish.kitPrice} Kit</span>
+            <div>
+              <div className="text-sm text-green-600 font-semibold">Kit (Save {savingsPercent}%)</div>
+              <div className="flex items-center text-lg font-bold text-green-600">
+                <IndianRupee className="h-5 w-5" />
+                <span>{dish.kitPrice}</span>
+              </div>
             </div>
           </div>
-          <Button 
-            className="bg-green-600 hover:bg-green-700 text-white"
-            onClick={(e) => {
-              e.stopPropagation();
-              onClick();
-            }}
-          >
-            View Options
-          </Button>
+          
+          <div className="flex gap-2">
+            <Button 
+              variant="outline"
+              size="sm"
+              className="flex-1 text-xs"
+              onClick={(e) => {
+                e.stopPropagation();
+                onClick();
+              }}
+            >
+              View Details
+            </Button>
+            <Button 
+              size="sm"
+              className={`flex-1 text-xs transition-all duration-200 ${
+                isAdded 
+                  ? 'bg-green-500 hover:bg-green-600' 
+                  : 'bg-green-600 hover:bg-green-700'
+              }`}
+              onClick={(e) => {
+                e.stopPropagation();
+                onAddToCart?.();
+              }}
+            >
+              {isAdded ? '✓ Added' : 'Add to Cart'}
+            </Button>
+          </div>
         </div>
       </div>
     </motion.div>
