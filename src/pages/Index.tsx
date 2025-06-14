@@ -1,12 +1,13 @@
-
 import React, { useState } from 'react';
-import { Search, Star, Clock, ChefHat, Leaf, Pizza, Coffee, Heart, IndianRupee } from 'lucide-react';
-import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { Search, Leaf, ShoppingCart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
 import DishCard from '@/components/DishCard';
 import Cart from '@/components/Cart';
+import { useCart } from '@/context/CartContext';
 
 const categories = [
   { name: 'South Indian', icon: ChefHat, color: 'bg-orange-500' },
@@ -379,252 +380,279 @@ const featuredDishes = [
 ];
 
 const Index = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('');
-  const [isCartOpen, setIsCartOpen] = useState(false);
-  const [addedToCart, setAddedToCart] = useState<number[]>([]);
   const navigate = useNavigate();
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCuisine, setSelectedCuisine] = useState('All');
+  const { cartItems, addToCart, updateQuantity, removeItem, getTotalItems, isCartOpen, setIsCartOpen } = useCart();
 
   const filteredDishes = featuredDishes.filter(dish => {
     const matchesSearch = dish.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          dish.restaurant.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          dish.cuisine.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === '' || dish.cuisine === selectedCategory;
+    const matchesCategory = selectedCuisine === 'All' || dish.cuisine === selectedCuisine;
     return matchesSearch && matchesCategory;
   });
 
-  const handleAddToCart = (dishId: number) => {
-    setAddedToCart(prev => [...prev, dishId]);
-    setTimeout(() => {
-      setAddedToCart(prev => prev.filter(id => id !== dishId));
-    }, 2000);
+  const handleAddToCart = (dish: any) => {
+    const cartItem = {
+      id: dish.id.toString(),
+      name: dish.name,
+      restaurant: dish.restaurant,
+      type: 'restaurant' as const,
+      price: dish.price,
+      servings: 1,
+      image: dish.image
+    };
+    addToCart(cartItem);
   };
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: {
-        duration: 0.5
-      }
-    }
+  const isItemInCart = (dishId: number) => {
+    return cartItems.some(item => item.id === dishId.toString());
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50">
-      {/* Header */}
-      <motion.header 
-        initial={{ y: -50, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        className="bg-white shadow-sm border-b"
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="bg-green-600 text-white p-2 rounded-full">
-                <Leaf className="h-6 w-6" />
+    <>
+      <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50">
+        {/* Header */}
+        <motion.header 
+          initial={{ y: -50, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          className="bg-white shadow-sm border-b sticky top-0 z-40"
+        >
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="bg-green-600 text-white p-2 rounded-full">
+                  <Leaf className="h-6 w-6" />
+                </div>
+                <div>
+                  <h1 className="text-2xl font-bold text-gray-900">VegBite</h1>
+                  <p className="text-sm text-green-600 font-medium">Restaurant Flavors. Home-Cooked. Pure Veg Always.</p>
+                </div>
               </div>
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900">VegBite</h1>
-                <p className="text-xs text-green-600 font-medium">Pure Veg Always</p>
-              </div>
-            </div>
-            <div className="flex items-center space-x-4">
-              <Button 
+              
+              {/* Cart Icon */}
+              <Button
                 variant="outline"
-                onClick={() => navigate('/login')}
-              >
-                Login
-              </Button>
-              <Button 
                 onClick={() => setIsCartOpen(true)}
-                className="bg-green-600 hover:bg-green-700"
+                className="relative"
               >
-                Cart
+                <ShoppingCart className="h-5 w-5" />
+                {getTotalItems() > 0 && (
+                  <Badge 
+                    className="absolute -top-2 -right-2 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs bg-green-500"
+                  >
+                    {getTotalItems()}
+                  </Badge>
+                )}
               </Button>
             </div>
           </div>
-        </div>
-      </motion.header>
+        </motion.header>
 
-      {/* Hero Section */}
-      <motion.section 
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8 }}
-        className="py-16 px-4"
-      >
-        <div className="max-w-4xl mx-auto text-center">
-          <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ delay: 0.2, duration: 0.6 }}
-            className="mb-8"
-          >
-            <div className="inline-flex items-center bg-green-100 text-green-800 px-6 py-3 rounded-full mb-6">
-              <Leaf className="h-5 w-5 mr-2" />
-              <span className="font-semibold">100% Pure Vegetarian</span>
-            </div>
-          </motion.div>
-          
-          <h2 className="text-5xl font-bold text-gray-900 mb-6">
-            Restaurant Flavors. Home-Cooked.
-            <span className="text-green-600 block">Pure Veg Always.</span>
-          </h2>
-          <p className="text-xl text-gray-600 mb-4">
-            Order delicious vegetarian dishes or cook them yourself with our premium ingredient kits
-          </p>
-          <div className="bg-orange-100 text-orange-800 px-6 py-3 rounded-lg mb-8 inline-block">
-            <span className="font-semibold">Cook at Home, Save More – Ingredient Kits Available</span>
-          </div>
-          
-          {/* Search Bar */}
-          <motion.div 
-            className="relative max-w-2xl mx-auto mb-12"
-            whileHover={{ scale: 1.02 }}
-            transition={{ duration: 0.2 }}
-          >
-            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
-            <Input
-              type="text"
-              placeholder="Search for vegetarian dishes, cuisines..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-12 py-4 text-lg rounded-full border-2 border-green-200 focus:border-green-400"
-            />
-          </motion.div>
-        </div>
-      </motion.section>
-
-      {/* Categories */}
-      <motion.section 
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-        className="py-8 px-4"
-      >
-        <div className="max-w-6xl mx-auto">
-          <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center">Browse Cuisines</h3>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        {/* Hero Section */}
+        <motion.section 
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="py-16 px-4"
+        >
+          <div className="max-w-4xl mx-auto text-center">
             <motion.div
-              variants={itemVariants}
-              whileHover={{ scale: 1.05, y: -5 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setSelectedCategory('')}
-              className={`bg-gray-600 rounded-2xl p-4 text-white cursor-pointer shadow-lg hover:shadow-xl transition-all duration-300 ${selectedCategory === '' ? 'ring-2 ring-green-500' : ''}`}
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.2, duration: 0.6 }}
+              className="mb-8"
             >
-              <div className="h-8 w-8 mb-2 mx-auto flex items-center justify-center">🍽️</div>
-              <p className="text-center font-semibold text-sm">All Dishes</p>
+              <div className="inline-flex items-center bg-green-100 text-green-800 px-6 py-3 rounded-full mb-6">
+                <Leaf className="h-5 w-5 mr-2" />
+                <span className="font-semibold">100% Pure Vegetarian</span>
+              </div>
             </motion.div>
-            {categories.map((category) => (
+            
+            <h2 className="text-5xl font-bold text-gray-900 mb-6">
+              Restaurant Flavors. Home-Cooked.
+              <span className="text-green-600 block">Pure Veg Always.</span>
+            </h2>
+            <p className="text-xl text-gray-600 mb-4">
+              Order delicious vegetarian dishes or cook them yourself with our premium ingredient kits
+            </p>
+            <div className="bg-orange-100 text-orange-800 px-6 py-3 rounded-lg mb-8 inline-block">
+              <span className="font-semibold">Cook at Home, Save More – Ingredient Kits Available</span>
+            </div>
+            
+            {/* Search Bar */}
+            <motion.div 
+              className="relative max-w-2xl mx-auto mb-12"
+              whileHover={{ scale: 1.02 }}
+              transition={{ duration: 0.2 }}
+            >
+              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+              <Input
+                type="text"
+                placeholder="Search for vegetarian dishes, cuisines..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-12 py-4 text-lg rounded-full border-2 border-green-200 focus:border-green-400"
+              />
+            </motion.div>
+          </div>
+        </motion.section>
+
+        {/* Cuisine Filter */}
+        <motion.section 
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="py-8 px-4"
+        >
+          <div className="max-w-6xl mx-auto">
+            <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center">Browse Cuisines</h3>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
               <motion.div
-                key={category.name}
                 variants={itemVariants}
                 whileHover={{ scale: 1.05, y: -5 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={() => setSelectedCategory(category.name)}
-                className={`${category.color} rounded-2xl p-4 text-white cursor-pointer shadow-lg hover:shadow-xl transition-all duration-300 ${selectedCategory === category.name ? 'ring-2 ring-green-500' : ''}`}
+                onClick={() => setSelectedCuisine('')}
+                className={`bg-gray-600 rounded-2xl p-4 text-white cursor-pointer shadow-lg hover:shadow-xl transition-all duration-300 ${selectedCuisine === '' ? 'ring-2 ring-green-500' : ''}`}
               >
-                <category.icon className="h-6 w-6 mb-2 mx-auto" />
-                <p className="text-center font-semibold text-sm">{category.name}</p>
+                <div className="h-8 w-8 mb-2 mx-auto flex items-center justify-center">🍽️</div>
+                <p className="text-center font-semibold text-sm">All Dishes</p>
               </motion.div>
-            ))}
-          </div>
-          {selectedCategory && (
-            <div className="text-center mt-4">
-              <span className="bg-green-100 text-green-800 px-4 py-2 rounded-full text-sm font-medium">
-                Showing {filteredDishes.length} {selectedCategory} dishes
-              </span>
+              {categories.map((category) => (
+                <motion.div
+                  key={category.name}
+                  variants={itemVariants}
+                  whileHover={{ scale: 1.05, y: -5 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setSelectedCuisine(category.name)}
+                  className={`${category.color} rounded-2xl p-4 text-white cursor-pointer shadow-lg hover:shadow-xl transition-all duration-300 ${selectedCuisine === category.name ? 'ring-2 ring-green-500' : ''}`}
+                >
+                  <category.icon className="h-6 w-6 mb-2 mx-auto" />
+                  <p className="text-center font-semibold text-sm">{category.name}</p>
+                </motion.div>
+              ))}
             </div>
-          )}
-        </div>
-      </motion.section>
+            {selectedCuisine && (
+              <div className="text-center mt-4">
+                <span className="bg-green-100 text-green-800 px-4 py-2 rounded-full text-sm font-medium">
+                  Showing {filteredDishes.length} {selectedCuisine} dishes
+                </span>
+              </div>
+            )}
+          </div>
+        </motion.section>
 
-      {/* Featured Dishes */}
-      <motion.section 
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-        className="py-16 px-4"
-      >
-        <div className="max-w-7xl mx-auto">
+        {/* Featured Dishes */}
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <h3 className="text-3xl font-bold text-gray-900 mb-8 text-center">
-            {selectedCategory ? `${selectedCategory} Dishes` : 'Featured Dishes'}
+            {selectedCuisine ? `${selectedCuisine} Dishes` : 'Featured Dishes'}
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {filteredDishes.map((dish) => (
-              <motion.div key={dish.id} variants={itemVariants}>
-                <DishCard 
-                  dish={dish} 
-                  onClick={() => navigate(`/dish/${dish.id}`)}
-                  onAddToCart={() => handleAddToCart(dish.id)}
-                  isAdded={addedToCart.includes(dish.id)}
-                />
-              </motion.div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {filteredDishes.slice(0, 12).map((dish) => (
+              <DishCard
+                key={dish.id}
+                dish={dish}
+                onClick={() => navigate(`/dish/${dish.id}`)}
+                onAddToCart={() => handleAddToCart(dish)}
+                isAdded={isItemInCart(dish.id)}
+              />
             ))}
           </div>
-          {filteredDishes.length === 0 && (
-            <div className="text-center py-12">
-              <p className="text-gray-500 text-lg">No dishes found. Try searching for something else!</p>
-            </div>
-          )}
-        </div>
-      </motion.section>
+        </section>
 
-      {/* VegBite Promise */}
-      <motion.section 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.8 }}
-        className="py-16 px-4 bg-green-600 text-white"
-      >
-        <div className="max-w-4xl mx-auto text-center">
-          <Leaf className="h-16 w-16 mx-auto mb-6 text-green-200" />
-          <h3 className="text-3xl font-bold mb-4">Our VegBite Promise</h3>
-          <p className="text-xl text-green-100 mb-8">
-            Every dish is 100% vegetarian, made with fresh ingredients, and crafted with love. 
-            Whether you order or cook, you're getting authentic flavors without compromise.
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
-            <div className="text-center">
-              <div className="bg-green-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Leaf className="h-8 w-8" />
+        {/* VegBite Promise */}
+        <motion.section 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.8 }}
+          className="py-16 px-4 bg-green-600 text-white"
+        >
+          <div className="max-w-4xl mx-auto text-center">
+            <Leaf className="h-16 w-16 mx-auto mb-6 text-green-200" />
+            <h3 className="text-3xl font-bold mb-4">Our VegBite Promise</h3>
+            <p className="text-xl text-green-100 mb-8">
+              Every dish is 100% vegetarian, made with fresh ingredients, and crafted with love. 
+              Whether you order or cook, you're getting authentic flavors without compromise.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
+              <div className="text-center">
+                <div className="bg-green-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Leaf className="h-8 w-8" />
+                </div>
+                <h4 className="font-semibold mb-2">100% Pure Veg</h4>
+                <p className="text-green-100">No meat, no fish, completely vegetarian</p>
               </div>
-              <h4 className="font-semibold mb-2">100% Pure Veg</h4>
-              <p className="text-green-100">No meat, no fish, completely vegetarian</p>
-            </div>
-            <div className="text-center">
-              <div className="bg-green-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <ChefHat className="h-8 w-8" />
+              <div className="text-center">
+                <div className="bg-green-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <ChefHat className="h-8 w-8" />
+                </div>
+                <h4 className="font-semibold mb-2">Chef Quality</h4>
+                <p className="text-green-100">Restaurant-grade recipes and ingredients</p>
               </div>
-              <h4 className="font-semibold mb-2">Chef Quality</h4>
-              <p className="text-green-100">Restaurant-grade recipes and ingredients</p>
-            </div>
-            <div className="text-center">
-              <div className="bg-green-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <IndianRupee className="h-8 w-8" />
+              <div className="text-center">
+                <div className="bg-green-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <IndianRupee className="h-8 w-8" />
+                </div>
+                <h4 className="font-semibold mb-2">Save Money</h4>
+                <p className="text-green-100">Cook at home and save up to 50% on your food</p>
               </div>
-              <h4 className="font-semibold mb-2">Save Money</h4>
-              <p className="text-green-100">Cook at home and save up to 50% on your food</p>
             </div>
           </div>
-        </div>
-      </motion.section>
+        </motion.section>
+
+        {/* Footer */}
+        <motion.footer 
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="py-8 px-4"
+        >
+          <div className="max-w-6xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="text-center">
+                <h4 className="font-semibold text-gray-900">Contact Us</h4>
+                <p className="text-gray-600">123 VegBite St, Anytown, USA</p>
+                <p className="text-gray-600">info@vegbite.com</p>
+              </div>
+              <div className="text-center">
+                <h4 className="font-semibold text-gray-900">Follow Us</h4>
+                <div className="flex space-x-4">
+                  <a href="#" className="text-gray-600 hover:text-gray-800">
+                    <svg className="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 12a4 4 0 01-4 4v5a4 4 0 01-4 4v-5a4 4 0 014-4h12a4 4 0 014-4v-5a4 4 0 014-4h-12a4 4 0 014-4v5a4 4 0 014 4z" />
+                    </svg>
+                  </a>
+                  <a href="#" className="text-gray-600 hover:text-gray-800">
+                    <svg className="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18 10a7 7 0 01-7 7h14a7 7 0 01-7-7v-2a2 2 0 00-2-2h-2a2 2 0 00-2 2v2a7 7 0 01-7 7H5a7 7 0 01-7-7v-2a2 2 0 00-2-2h-2a2 2 0 00-2 2v2a7 7 0 01-7 7H3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a7 7 0 01-7-7z" />
+                    </svg>
+                  </a>
+                  <a href="#" className="text-gray-600 hover:text-gray-800">
+                    <svg className="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 10h4a2 2 0 012 2v3a2 2 0 01-2 2h-2v-3a2 2 0 00-2-2h-2a2 2 0 00-2 2v3a2 2 0 002 2h2v-3a2 2 0 012-2z" />
+                    </svg>
+                  </a>
+                </div>
+              </div>
+              <div className="text-center">
+                <h4 className="font-semibold text-gray-900">About Us</h4>
+                <p className="text-gray-600">VegBite is a leading provider of vegetarian food and cooking solutions.</p>
+              </div>
+            </div>
+          </div>
+        </motion.footer>
+      </div>
 
       {/* Cart Component */}
-      <Cart isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
-    </div>
+      <Cart
+        isOpen={isCartOpen}
+        onClose={() => setIsCartOpen(false)}
+        cartItems={cartItems}
+        updateQuantity={updateQuantity}
+        removeItem={removeItem}
+      />
+    </>
   );
 };
 

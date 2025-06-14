@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Plus, Minus, ShoppingCart, Trash2 } from 'lucide-react';
+import { X, Plus, Minus, ShoppingCart, Trash2, IndianRupee } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -21,47 +21,14 @@ interface CartItem {
 interface CartProps {
   isOpen: boolean;
   onClose: () => void;
+  cartItems: CartItem[];
+  updateQuantity: (id: string, newQuantity: number) => void;
+  removeItem: (id: string) => void;
 }
 
-const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
-  const [cartItems, setCartItems] = useState<CartItem[]>([
-    {
-      id: '1',
-      name: 'Chicken Tikka Masala',
-      restaurant: 'Spice Palace',
-      type: 'restaurant',
-      price: 18.99,
-      quantity: 1,
-      image: 'https://images.unsplash.com/photo-1618160702438-9b02ab6515c9?w=100'
-    },
-    {
-      id: '2',
-      name: 'Margherita Pizza Kit',
-      type: 'kit',
-      price: 19.99,
-      quantity: 1,
-      servings: 2,
-      kitType: 'standard',
-      image: 'https://images.unsplash.com/photo-1582562124811-c09040d0a901?w=100'
-    }
-  ]);
-
-  const updateQuantity = (id: string, newQuantity: number) => {
-    if (newQuantity === 0) {
-      setCartItems(cartItems.filter(item => item.id !== id));
-    } else {
-      setCartItems(cartItems.map(item => 
-        item.id === id ? { ...item, quantity: newQuantity } : item
-      ));
-    }
-  };
-
-  const removeItem = (id: string) => {
-    setCartItems(cartItems.filter(item => item.id !== id));
-  };
-
+const Cart: React.FC<CartProps> = ({ isOpen, onClose, cartItems, updateQuantity, removeItem }) => {
   const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  const deliveryFee = 3.99;
+  const deliveryFee = cartItems.length > 0 ? 25 : 0; // ₹25 delivery fee
   const total = subtotal + deliveryFee;
 
   const overlayVariants = {
@@ -104,17 +71,17 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
             className="fixed right-0 top-0 h-full w-full max-w-md bg-white shadow-2xl z-50 overflow-hidden flex flex-col"
           >
             {/* Header */}
-            <div className="bg-orange-500 text-white p-6">
+            <div className="bg-green-500 text-white p-6">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
                   <ShoppingCart className="h-6 w-6" />
                   <h2 className="text-xl font-bold">Your Cart</h2>
                 </div>
-                <Button variant="ghost" size="sm" onClick={onClose} className="text-white hover:bg-orange-600">
+                <Button variant="ghost" size="sm" onClick={onClose} className="text-white hover:bg-green-600">
                   <X className="h-5 w-5" />
                 </Button>
               </div>
-              <p className="text-orange-100 mt-1">{cartItems.length} item(s)</p>
+              <p className="text-green-100 mt-1">{cartItems.length} item(s)</p>
             </div>
 
             {/* Cart Items */}
@@ -159,7 +126,7 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
                                       variant={item.type === 'restaurant' ? 'default' : 'secondary'}
                                       className="text-xs"
                                     >
-                                      {item.type === 'restaurant' ? 'Delivery' : 'Kit'}
+                                      {item.type === 'restaurant' ? 'Ready-Made' : 'Kit'}
                                     </Badge>
                                     {item.servings && (
                                       <Badge variant="outline" className="text-xs">
@@ -200,9 +167,10 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
                                     <Plus className="h-3 w-3" />
                                   </Button>
                                 </div>
-                                <span className="font-semibold text-orange-600">
-                                  ${(item.price * item.quantity).toFixed(2)}
-                                </span>
+                                <div className="flex items-center font-semibold text-green-600">
+                                  <IndianRupee className="h-4 w-4" />
+                                  <span>{(item.price * item.quantity).toFixed(0)}</span>
+                                </div>
                               </div>
                             </div>
                           </div>
@@ -224,23 +192,33 @@ const Cart: React.FC<CartProps> = ({ isOpen, onClose }) => {
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
                     <span>Subtotal</span>
-                    <span>${subtotal.toFixed(2)}</span>
+                    <div className="flex items-center">
+                      <IndianRupee className="h-4 w-4" />
+                      <span>{subtotal.toFixed(0)}</span>
+                    </div>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span>Delivery Fee</span>
-                    <span>${deliveryFee.toFixed(2)}</span>
+                    <div className="flex items-center">
+                      <IndianRupee className="h-4 w-4" />
+                      <span>{deliveryFee.toFixed(0)}</span>
+                    </div>
                   </div>
                   <div className="flex justify-between font-semibold text-lg border-t pt-2">
                     <span>Total</span>
-                    <span className="text-orange-600">${total.toFixed(2)}</span>
+                    <div className="flex items-center text-green-600">
+                      <IndianRupee className="h-5 w-5" />
+                      <span>{total.toFixed(0)}</span>
+                    </div>
                   </div>
                 </div>
                 
                 <Button 
-                  className="w-full bg-orange-500 hover:bg-orange-600 text-white"
+                  className="w-full bg-green-500 hover:bg-green-600 text-white"
                   size="lg"
                 >
-                  Proceed to Checkout
+                  <IndianRupee className="h-5 w-5 mr-2" />
+                  Pay ₹{total.toFixed(0)}
                 </Button>
               </motion.div>
             )}
