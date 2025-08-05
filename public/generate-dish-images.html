@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dish Image Generator</title>
+</head>
+<body>
+    <canvas id="canvas" width="400" height="300" style="display: none;"></canvas>
+    <div id="images"></div>
+    
+    <script>
+        const dishes = [
+            {name: "Chilli Garlic Noodles", type: "Chinese Platters", color: "#FF6B6B"},
+            {name: "Fried Rice with Manchurian", type: "Chinese Platters", color: "#4ECDC4"},
+            {name: "Hakka Noodles", type: "Chinese Platters", color: "#45B7D1"},
+            {name: "Brownie with Icecream", type: "Desserts", color: "#96CEB4"},
+            {name: "Gulab Jamun", type: "Desserts", color: "#FCEAA7"},
+            {name: "Paneer Butter Masala", type: "North Indian - Paneer", color: "#FD79A8"},
+            {name: "Dosa Sambhar", type: "South Indian", color: "#FDCB6E"},
+            {name: "Aloo Tikki", type: "Starters", color: "#6C5CE7"},
+            // Add more dishes as needed
+        ];
+        
+        function generateImage(dish, index) {
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, 400, 300);
+            
+            // Background gradient
+            const gradient = ctx.createLinearGradient(0, 0, 400, 300);
+            gradient.addColorStop(0, dish.color);
+            gradient.addColorStop(1, dish.color + '80');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, 400, 300);
+            
+            // Dish type label
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+            ctx.fillRect(10, 10, 200, 30);
+            ctx.fillStyle = '#333';
+            ctx.font = '12px Arial';
+            ctx.fillText(dish.type, 15, 30);
+            
+            // Dish name
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+            ctx.fillRect(20, 220, 360, 60);
+            ctx.fillStyle = '#333';
+            ctx.font = 'bold 18px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(dish.name, 200, 250);
+            ctx.font = '14px Arial';
+            ctx.fillText('VegBite Kitchen', 200, 270);
+            
+            // Food icon
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+            ctx.beginPath();
+            ctx.arc(200, 120, 40, 0, 2 * Math.PI);
+            ctx.fill();
+            ctx.fillStyle = dish.color;
+            ctx.font = '30px Arial';
+            ctx.fillText('🍽️', 200, 130);
+            
+            // Convert to image and download
+            const link = document.createElement('a');
+            link.download = dish.name.toLowerCase().replace(/\s+/g, '-') + '.jpg';
+            link.href = canvas.toDataURL('image/jpeg', 0.8);
+            link.click();
+        }
+        
+        // Generate all images
+        dishes.forEach((dish, index) => {
+            setTimeout(() => generateImage(dish, index), index * 500);
+        });
+    </script>
+</body>
+</html>
